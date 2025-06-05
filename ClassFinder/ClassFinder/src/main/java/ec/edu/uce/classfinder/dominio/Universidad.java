@@ -3,13 +3,14 @@ package ec.edu.uce.classfinder.dominio;
 import ec.edu.uce.classfinder.util.Validadores;
 
 /**
- * Representa una universidad.
- * Gestiona lugares, reservas, usuarios y sus operaciones CRUD.
+ * Representa una universidad en el sistema ClassFinder.
  * @author Grupo 7: Merino Miguel, Quinatoa Mishell
  */
 public class Universidad {
-
-    private String idUniversidad;
+    private static int contadorUniversidades = 1;
+    private static final String PREFIJO = "UNI-";
+    private static final int MAX_ELEMENTOS = 100;
+    private final String idUniversidad;
     private String nombreUniversidad;
     private String nombreRector;
     private String telefono;
@@ -20,12 +21,8 @@ public class Universidad {
     private Usuario[] usuarios;
     private int numUsuarios;
 
-    /**
-     * Constructor por defecto.
-     * Inicializa una universidad con valores predeterminados y arreglos de 5 elementos para lugares, reservas y usuarios.
-     */
     public Universidad() {
-        idUniversidad = "UNI-001";
+        idUniversidad = PREFIJO + String.format("%03d", contadorUniversidades++);
         nombreUniversidad = "Universidad Central";
         nombreRector = "Juan Pérez";
         telefono = "0991234567";
@@ -35,17 +32,11 @@ public class Universidad {
         numReservas = 0;
         usuarios = new Usuario[5];
         numUsuarios = 0;
+        inicializar();
     }
 
-    /**
-     * Constructor con parámetros.
-     * @param idUniversidad identificador de la universidad
-     * @param nombreUniversidad nombre de la universidad
-     * @param nombreRector nombre del rector
-     * @param telefono teléfono de contacto
-     */
     public Universidad(String idUniversidad, String nombreUniversidad, String nombreRector, String telefono) {
-        setIdUniversidad(idUniversidad);
+        this.idUniversidad = idUniversidad != null && Validadores.esIdValido(idUniversidad) ? idUniversidad : PREFIJO + String.format("%03d", contadorUniversidades++);
         setNombreUniversidad(nombreUniversidad);
         setNombreRector(nombreRector);
         setTelefono(telefono);
@@ -55,147 +46,68 @@ public class Universidad {
         numReservas = 0;
         usuarios = new Usuario[5];
         numUsuarios = 0;
+        inicializar();
     }
 
-    /**
-     * Obtiene el identificador de la universidad.
-     * @return el identificador de la universidad
-     */
     public String getIdUniversidad() {
         return idUniversidad;
     }
 
-    /**
-     * Establece el identificador de la universidad.
-     * Valida que el valor no sea nulo ni inválido, usando un valor por defecto si falla.
-     * @param idUniversidad nuevo identificador
-     */
-    public void setIdUniversidad(String idUniversidad) {
-        if (idUniversidad == null || !Validadores.esIdValido(idUniversidad)) {
-            this.idUniversidad = "UNI-001";
-        } else {
-            this.idUniversidad = idUniversidad;
-        }
-    }
-
-    /**
-     * Obtiene el nombre de la universidad.
-     * @return el nombre de la universidad
-     */
     public String getNombreUniversidad() {
         return nombreUniversidad;
     }
 
-    /**
-     * Establece el nombre de la universidad.
-     * Valida que el valor no sea nulo ni inválido, usando un valor por defecto si falla.
-     * @param nombreUniversidad nuevo nombre
-     */
     public void setNombreUniversidad(String nombreUniversidad) {
-        if (nombreUniversidad == null || !Validadores.esTextoValido(nombreUniversidad)) {
-            this.nombreUniversidad = "Universidad Central";
-        } else {
-            this.nombreUniversidad = nombreUniversidad;
-        }
+        this.nombreUniversidad = (nombreUniversidad != null && Validadores.esTextoValido(nombreUniversidad)) ? nombreUniversidad : "Universidad Central";
     }
 
-    /**
-     * Obtiene el nombre del rector.
-     * @return el nombre del rector
-     */
     public String getNombreRector() {
         return nombreRector;
     }
 
-    /**
-     * Establece el nombre del rector.
-     * Valida que el valor no sea nulo ni inválido, usando un valor por defecto si falla.
-     * @param nombreRector nuevo nombre del rector
-     */
     public void setNombreRector(String nombreRector) {
-        if (nombreRector == null || !Validadores.esTextoValido(nombreRector)) {
-            this.nombreRector = "Juan Pérez";
-        } else {
-            this.nombreRector = nombreRector;
-        }
+        this.nombreRector = (nombreRector != null && Validadores.esTextoValido(nombreRector)) ? nombreRector : "Juan Pérez";
     }
 
-    /**
-     * Obtiene el teléfono de la universidad.
-     * @return el teléfono
-     */
     public String getTelefono() {
         return telefono;
     }
 
-    /**
-     * Establece el teléfono de la universidad.
-     * Valida que el valor sea un número de 10 dígitos, usando un valor por defecto si falla.
-     * @param telefono nuevo teléfono
-     */
     public void setTelefono(String telefono) {
-        if (telefono == null || !telefono.matches("\\d{10}")) {
-            this.telefono = "0991234567";
-        } else {
-            this.telefono = telefono;
-        }
+        this.telefono = (telefono != null && telefono.matches("\\d{10}")) ? telefono : "0991234567";
     }
 
-    /**
-     * Obtiene el número de lugares registrados.
-     * @return el número de lugares
-     */
     public int getNumLugares() {
         return numLugares;
     }
 
-    /**
-     * Obtiene el arreglo de lugares.
-     * @return el arreglo de lugares
-     */
     public Lugar[] getLugares() {
         return lugares;
     }
 
-    /**
-     * Obtiene el número de reservas registradas.
-     * @return el número de reservas
-     */
     public int getNumReservas() {
         return numReservas;
     }
 
-    /**
-     * Obtiene el arreglo de reservas.
-     * @return el arreglo de reservas
-     */
     public Reserva[] getReservas() {
         return reservas;
     }
 
-    /**
-     * Obtiene el número de usuarios registrados.
-     * @return el número de usuarios
-     */
     public int getNumUsuarios() {
         return numUsuarios;
     }
 
-    /**
-     * Obtiene el arreglo de usuarios.
-     * @return el arreglo de usuarios
-     */
     public Usuario[] getUsuarios() {
         return usuarios;
     }
 
-    /**
-     * Crea un nuevo lugar y lo agrega a la universidad.
-     * @param lugar Lugar a agregar
-     * @return true si el lugar fue agregado exitosamente, false de lo contrario
-     */
+    public static int getMaxElementos() {
+        return MAX_ELEMENTOS;
+    }
+
+    // Métodos CRUD para Lugares
     public boolean crearLugar(Lugar lugar) {
-        if (lugar == null) return false;
+        if (lugar == null || !validarDuplicado(lugar)) return false;
         if (numLugares == lugares.length) {
             Lugar[] temp = new Lugar[lugares.length + 5];
             System.arraycopy(lugares, 0, temp, 0, numLugares);
@@ -205,69 +117,79 @@ public class Universidad {
         return true;
     }
 
-    /**
-     * Consulta todos los lugares de la universidad.
-     * @return Cadena con la información de todos los lugares, incluyendo índices
-     */
+    public boolean crearLugar(Edificio edificio) {
+        return crearLugar((Lugar) edificio);
+    }
+
     public String consultarLugares() {
         StringBuilder info = new StringBuilder();
-        int index = 1; // Mantener el índice para mostrar al usuario (basado en 1)
-        for (Lugar lugar : lugares) {
-            if (index <= numLugares) {
-                info.append(index).append(": ").append(lugar.toString()).append("\n");
-                index++;
-            }
+        for (int i = 0; i < numLugares; i++) {
+            info.append((i + 1)).append(": ").append(lugares[i].toString()).append("\n");
         }
         return info.length() > 0 ? info.toString() : "No hay lugares registrados.";
     }
 
-    /**
-     * Actualiza los datos de un lugar existente.
-     * @param pos Posición del lugar a actualizar
-     * @param lugar Nuevo lugar con los datos actualizados
-     * @return true si la actualización fue exitosa, false de lo contrario
-     */
     public boolean editarLugar(int pos, Lugar lugar) {
-        if (pos >= 0 && pos < numLugares && lugar != null) {
+        if (pos >= 0 && pos < numLugares && lugar != null && validarDuplicado(lugar, pos)) {
             lugares[pos] = lugar;
             return true;
         }
         return false;
     }
 
-    /**
-     * Elimina un lugar de la universidad.
-     * @param pos Posición del lugar a eliminar
-     * @return true si la eliminación fue exitosa, false de lo contrario
-     */
     public boolean eliminarLugar(int pos) {
-        if (pos >= 0 && pos < numLugares) {
-            for (int i = pos; i < numLugares - 1; i++) {
-                lugares[i] = lugares[i + 1];
-            }
-            lugares[numLugares - 1] = null;
-            numLugares--;
+        if (pos < 0 || pos >= numLugares) return false;
+        System.arraycopy(lugares, pos + 1, lugares, pos, numLugares - pos - 1);
+        lugares[--numLugares] = null;
+        return true;
+    }
+
+    // Métodos CRUD para Reservas
+    public boolean crearReserva(Reserva reserva) {
+        if (reserva == null || !validarDuplicado(reserva)) return false;
+        if (numReservas == reservas.length) {
+            Reserva[] nuevo = new Reserva[reservas.length + 5];
+            System.arraycopy(reservas, 0, nuevo, 0, numReservas);
+            reservas = nuevo;
+        }
+        reservas[numReservas++] = reserva;
+        return true;
+    }
+
+    public boolean crearReserva(ReservaTemporal reservaTemporal) {
+        return crearReserva((Reserva) reservaTemporal);
+    }
+
+    public boolean crearReserva(ReservaSemestre reservaSemestre) {
+        return crearReserva((Reserva) reservaSemestre);
+    }
+
+    public String consultarReservas() {
+        StringBuilder info = new StringBuilder();
+        for (int i = 0; i < numReservas; i++) {
+            info.append((i + 1)).append(": ").append(reservas[i].toString()).append("\n");
+        }
+        return info.length() > 0 ? info.toString() : "No hay reservas registradas.";
+    }
+
+    public boolean editarReserva(int pos, Reserva reserva) {
+        if (pos >= 0 && pos < numReservas && reserva != null && validarDuplicado(reserva, pos)) {
+            reservas[pos] = reserva;
             return true;
         }
         return false;
     }
 
-    public boolean agregarEdificio(Edificio edificio) {
-        if (numLugares < lugares.length) {
-            lugares[numLugares] = edificio;
-            numLugares++;
-            return true;
-        }
-        return false;
+    public boolean eliminarReserva(int pos) {
+        if (pos < 0 || pos >= numReservas) return false;
+        System.arraycopy(reservas, pos + 1, reservas, pos, numReservas - pos - 1);
+        reservas[--numReservas] = null;
+        return true;
     }
 
-    /**
-     * Crea un nuevo usuario y lo agrega a la universidad.
-     * @param usuario Usuario a agregar
-     * @return true si el usuario fue agregado exitosamente, false de lo contrario
-     */
+    // Métodos CRUD para Usuarios
     public boolean crearUsuario(Usuario usuario) {
-        if (usuario == null) return false;
+        if (usuario == null || !validarDuplicado(usuario)) return false;
         if (numUsuarios == usuarios.length) {
             Usuario[] temp = new Usuario[usuarios.length + 5];
             System.arraycopy(usuarios, 0, temp, 0, numUsuarios);
@@ -277,93 +199,36 @@ public class Universidad {
         return true;
     }
 
-    /**
-     * Consulta todos los usuarios de la universidad.
-     * @return Cadena con la información de todos los usuarios, incluyendo índices
-     */
     public String consultarUsuarios() {
         StringBuilder info = new StringBuilder();
-        int index = 1;
-        for (Usuario usuario : usuarios) {
-            if (index <= numUsuarios) {
-                info.append(index).append(": ").append(usuario.toString()).append("\n");
-                index++;
-            }
+        for (int i = 0; i < numUsuarios; i++) {
+            info.append((i + 1)).append(": ").append(usuarios[i].toString()).append("\n");
         }
         return info.length() > 0 ? info.toString() : "No hay usuarios registrados.";
     }
 
-    /**
-     * Actualiza los datos de un usuario existente.
-     * @param pos Posición del usuario a actualizar
-     * @param usuario Nuevo usuario con los datos actualizados
-     * @return true si la actualización fue exitosa, false de lo contrario
-     */
     public boolean editarUsuario(int pos, Usuario usuario) {
-        if (pos >= 0 && pos < numUsuarios && usuario != null) {
+        if (pos >= 0 && pos < numUsuarios && usuario != null && validarDuplicado(usuario, pos)) {
+            // Verificar que la cédula no haya cambiado
+            if (!usuarios[pos].getCedulaIdentidad().equals(usuario.getCedulaIdentidad())) {
+                return false; // No permitir cambiar la cédula
+            }
             usuarios[pos] = usuario;
             return true;
         }
         return false;
     }
 
-    /**
-     * Elimina un usuario de la universidad.
-     * @param pos Posición del usuario a eliminar
-     * @return true si la eliminación fue exitosa, false de lo contrario
-     */
     public boolean eliminarUsuario(int pos) {
-        if (pos >= 0 && pos < numUsuarios) {
-            for (int i = pos; i < numUsuarios - 1; i++) {
-                usuarios[i] = usuarios[i + 1];
-            }
-            usuarios[--numUsuarios] = null;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Crea una nueva reserva y la agrega a la universidad.
-     * @param reserva Reserva a agregar
-     * @return true si la reserva fue agregada exitosamente, false de lo contrario
-     */
-    public boolean crearReserva(Reserva reserva) {
-        if (reserva == null) return false;
-        if (numReservas == reservas.length) {
-            Reserva[] temp = new Reserva[reservas.length + 5];
-            System.arraycopy(reservas, 0, temp, 0, numReservas);
-            reservas = temp;
-        }
-        reservas[numReservas++] = reserva;
+        if (pos < 0 || pos >= numUsuarios) return false;
+        System.arraycopy(usuarios, pos + 1, usuarios, pos, numUsuarios - pos - 1);
+        usuarios[--numUsuarios] = null;
         return true;
     }
 
-    /**
-     * Consulta todas las reservas de la universidad.
-     * @return Cadena con la información de todas las reservas, incluyendo índices
-     */
-    public String consultarReservas() {
-        StringBuilder info = new StringBuilder();
-        int index = 1;
-        for (Reserva reserva : reservas) {
-            if (index <= numReservas) {
-                info.append(index).append(": ").append(reserva.toString()).append("\n");
-                index++;
-            }
-        }
-        return info.length() > 0 ? info.toString() : "No hay reservas registradas.";
-    }
-
-    /**
-     * Busca un usuario por su ID.
-     * @param idUsuario El ID del usuario a buscar (formato USR-001).
-     * @return El objeto Usuario si se encuentra, null de lo contrario.
-     */
+    // Métodos de búsqueda
     public Usuario buscarUsuario(String idUsuario) {
-        if (idUsuario == null || !Validadores.esIdValido(idUsuario)) {
-            return null;
-        }
+        if (idUsuario == null) return null;
         for (Usuario usuario : usuarios) {
             if (usuario != null && usuario.getIdUsuario().equals(idUsuario)) {
                 return usuario;
@@ -372,22 +237,25 @@ public class Universidad {
         return null;
     }
 
-    /**
-     * Busca un espacio por su ID en todos los lugares.
-     * @param idEspacio El ID del espacio a buscar (formato ESP-001).
-     * @return El espacio encontrado, o null si no existe.
-     */
-    public Espacio buscarEspacio(String idEspacio) {
-        if (!Validadores.esIdValido(idEspacio)) {
-            return null;
+    public Usuario buscarUsuarioPorCedula(String cedula) {
+        if (cedula == null) return null;
+        for (Usuario usuario : usuarios) {
+            if (usuario != null && usuario.getCedulaIdentidad().equals(cedula)) {
+                return usuario;
+            }
         }
+        return null;
+    }
+
+
+    public Espacio buscarEspacio(String idEspacio) {
+        if (idEspacio == null) return null;
         for (int i = 0; i < numLugares; i++) {
             if (lugares[i] != null) {
-                Espacio[] espacios = lugares[i].getEspacios();
-                int numEspacios = lugares[i].getNumEspacios();
-                for (int j = 0; j < numEspacios; j++) {
-                    if (espacios[j] != null && espacios[j].getIdEspacio().equals(idEspacio)) {
-                        return espacios[j];
+                for (int j = 0; j < lugares[i].getNumEspacios(); j++) {
+                    Espacio espacio = lugares[i].getEspacios()[j];
+                    if (espacio != null && espacio.getIdEspacio().equals(idEspacio)) {
+                        return espacio;
                     }
                 }
             }
@@ -395,11 +263,8 @@ public class Universidad {
         return null;
     }
 
-
     public Reserva buscarReservaId(String idReserva) {
-        if (idReserva == null || !Validadores.esIdValido(idReserva)) {
-            return null;
-        }
+        if (idReserva == null) return null;
         for (Reserva reserva : reservas) {
             if (reserva != null && reserva.getIdReserva().equals(idReserva)) {
                 return reserva;
@@ -408,43 +273,112 @@ public class Universidad {
         return null;
     }
 
-
-
-
-    /**
-     * Actualiza los datos de una reserva existente.
-     * @param pos Posición de la reserva a actualizar
-     * @param reserva Nueva reserva con los datos actualizados
-     * @return true si la actualización fue exitosa, false de lo contrario
-     */
-    public boolean editarReserva(int pos, Reserva reserva) {
-        if (pos >= 0 && pos < numReservas && reserva != null) {
-            reservas[pos] = reserva;
-            return true;
+    // Validación de duplicados
+    public boolean validarDuplicado(Lugar lugar) {
+        for (Lugar l : lugares) {
+            if (l != null && l.equals(lugar)) {
+                return false;
+            }
         }
-        return false;
+        return true;
     }
 
     /**
-     * Elimina una reserva de la universidad.
-     * @param pos Posición de la reserva a eliminar
-     * @return true si la eliminación fue exitosa, false de lo contrario
+     *
+     * @param lugar: el nuevo objeto que quieres verificar si es duplicado.
+     * @param skipPos: el índice del Lugar que estás actualizando (es decir, el que se debe ignorar durante la comparación).
+     * @return
      */
-    public boolean eliminarReserva(int pos) {
-        if (pos >= 0 && pos < numReservas) {
-            for (int i = pos; i < numReservas - 1; i++) {
-                reservas[i] = reservas[i + 1];
+    private boolean validarDuplicado(Lugar lugar, int skipPos) {
+        for (int i = 0; i < numLugares; i++) {
+            if (i != skipPos && lugares[i] != null && lugares[i].equals(lugar)) {
+                return false;
             }
-            reservas[numReservas - 1] = null;
-            numReservas--;
-            return true;
         }
-        return false;
+        return true;
+    }
+
+    public boolean validarDuplicado(Reserva reserva) {
+        for (Reserva r : reservas) {
+            if (r != null && r.equals(reserva)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean validarDuplicado(Reserva reserva, int skipPos) {
+        for (int i = 0; i < numReservas; i++) {
+            if (i != skipPos && reservas[i] != null && reservas[i].equals(reserva)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean validarDuplicado(Usuario usuario) {
+        for (Usuario u : usuarios) {
+            if (u != null) {
+                if (u.getIdUsuario().equals(usuario.getIdUsuario()) ||
+                        u.getCedulaIdentidad().equals(usuario.getCedulaIdentidad())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean validarDuplicado(Usuario usuario, int skipPos) {
+        for (int i = 0; i < numUsuarios; i++) {
+            if (i != skipPos && usuarios[i] != null) {
+                if (usuarios[i].getIdUsuario().equals(usuario.getIdUsuario()) ||
+                        usuarios[i].getCedulaIdentidad().equals(usuario.getCedulaIdentidad())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // Inicialización
+    private void inicializar() {
+        usuarios[0] = new Usuario("USR-001", "Miguel Merino", "pass123456", "1728803246", "miguel@gmail.com", Rol.INVITADO);
+        usuarios[1] = new Usuario("USR-002", "Mishell Quinatoa", "pass456789", "1728803247", "mishell@gmail.com", Rol.DOCENTE);
+        usuarios[2] = new Usuario("USR-003", "Juan Pérez", "pass789123", "1728803248", "juan@gmail.com", Rol.ESTUDIANTE);
+        numUsuarios = 3;
+
+        lugares[0] = new Lugar("LUG-001", "Edificio A", "Edificio principal");
+        lugares[1] = new Edificio("LUG-002", "Edificio Civil", "Edificio de color azul de 4 pisos", 5, "Diagonal a la entrada de la gasca");
+        numLugares = 2;
+
+        Espacio espacio1 = new Espacio("ESP-001", "Aula 101", 30, "mediano");
+        Espacio espacio2 = new Espacio("ESP-002", "Lab 102", 20, "pequeño");
+        lugares[0].crearEspacio(espacio1);
+        lugares[0].crearEspacio(espacio2);
+
+        reservas[0] = new Reserva("RES-001", "2025/06/01 08:00", "2025/06/01 10:00", EstadoReserva.PENDIENTE, usuarios[0], espacio1);
+        numReservas = 1;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Universidad)) return false;
+        Universidad uc = (Universidad) o;
+        return idUniversidad.equals(uc.idUniversidad);
+    }
+
+    @Override
+    public int hashCode() {
+        return idUniversidad.hashCode();
     }
 
     @Override
     public String toString() {
-        return "Universidad" + "\r\nID: " + idUniversidad + "\r\nNombre: " + nombreUniversidad +
-                "\r\nRector: " + nombreRector + "\r\nTeléfono: " + telefono;
+        return "Universidad:" + "\r\nID: " + idUniversidad + "\r\nNombre: " + nombreUniversidad +
+                "\r\nRector: " + nombreRector + "\r\nTeléfono: " + telefono +
+                "\r\nLugares registrados: " + numLugares +
+                "\r\nReservas registradas: " + numReservas +
+                "\r\nUsuarios registrados: " + numUsuarios;
     }
 }

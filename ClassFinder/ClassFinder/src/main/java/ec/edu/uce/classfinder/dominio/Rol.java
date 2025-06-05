@@ -3,7 +3,7 @@ package ec.edu.uce.classfinder.dominio;
 public enum Rol {
     ESTUDIANTE(1, "Estudiante"),
     DOCENTE(2, "Docente"),
-    ADMINISTRADOR(3, "Administrador");
+    INVITADO(3, "Invitado");
 
     private final int numero;
     private final String descripcion;

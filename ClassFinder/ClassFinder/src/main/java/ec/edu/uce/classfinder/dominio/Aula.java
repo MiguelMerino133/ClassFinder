@@ -10,15 +10,16 @@ import ec.edu.uce.classfinder.util.Validadores;
 public class Aula extends Espacio {
 
     private String numeroAula;
-    private static int contadorAulas = 101; // Contador para generar números secuenciales
+    private static int contadorAulas = 1;
+    private static final String PREFIJO_AULA = "AUL-";
 
     /**
      * Constructor por defecto.
-     * Inicializa un aula con un número predeterminado "A-101".
+     * Inicializa un aula con un número predeterminado "AUL-001".
      */
     public Aula() {
         super();
-        numeroAula = "A-101";
+        this.numeroAula = PREFIJO_AULA + String.format("%03d", contadorAulas++);
     }
 
     /**
@@ -31,7 +32,7 @@ public class Aula extends Espacio {
      */
     public Aula(String idEspacio, String nombre, int capacidad, String tamano, String numeroAula) {
         super(idEspacio, nombre, capacidad, tamano);
-        this.numeroAula = numeroAula;
+        setNumeroAula(numeroAula);
     }
 
     /**
@@ -44,17 +45,16 @@ public class Aula extends Espacio {
 
     /**
      * Establece el número del aula.
-     * Valida que el valor no sea nulo ni inválido, usando un valor por defecto si falla.
+     * Valida que el valor siga el formato AUL-001, usando un valor por defecto si falla.
      * @param numeroAula nuevo número del aula
      */
     public void setNumeroAula(String numeroAula) {
-        if (numeroAula == null || !Validadores.esTextoValido(numeroAula)) {
-            this.numeroAula = "A-101";
+        if (numeroAula == null || !Validadores.esNumeroAulaValido(numeroAula)) {
+            this.numeroAula = PREFIJO_AULA + String.format("%03d", contadorAulas++);
         } else {
             this.numeroAula = numeroAula;
         }
     }
-
 
     @Override
     public String toString() {

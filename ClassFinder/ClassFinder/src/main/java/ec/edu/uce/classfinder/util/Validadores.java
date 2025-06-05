@@ -4,6 +4,7 @@ import ec.edu.uce.classfinder.dominio.EstadoReserva;
 import ec.edu.uce.classfinder.dominio.Rol;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -60,22 +61,56 @@ public class Validadores {
     }
 
     /**
+     * Valida si una cadena representa un número de aula válido (letras, números, guiones, máx. 75 caracteres).
+     * @param entradaTeclado La cadena a validar.
+     * @return true si el número de aula es válido, false de lo contrario.
+     */
+    public static boolean esNumeroAulaValido(String entradaTeclado) {
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9-]{1,75}$");
+        Matcher matcher = pattern.matcher(entradaTeclado);
+        return matcher.matches();
+    }
+
+    /**
      * Valida si una cadena representa una fecha con hora en el formato YYYY/MM/DD HH:MM y es futura.
      * @param entradaTeclado La cadena a validar.
      * @return true si la fecha es válida y futura, false de lo contrario.
      */
     public static boolean esFechaConHoraValida(String entradaTeclado) {
-        Pattern pattern = Pattern.compile("^\\d{4}/\\d{2}/\\d{2} \\d{2}:\\d{2}$");
+        Pattern pattern = Pattern.compile("^(\\d{4})/(\\d{2})/(\\d{2}) (\\d{2}):(\\d{2})$");
         Matcher matcher = pattern.matcher(entradaTeclado);
-        if (!matcher.matches())
+        if (!matcher.matches()) {
             return false;
+        }
 
         try {
+            int anio = Integer.parseInt(matcher.group(1));
+            int mes = Integer.parseInt(matcher.group(2));
+            int dia = Integer.parseInt(matcher.group(3));
+            int hora = Integer.parseInt(matcher.group(4));
+            int minutos = Integer.parseInt(matcher.group(5));
+
+            // Validar rangos
+            if (mes < 1 || mes > 12 || dia < 1 || dia > 31 || hora > 23 || minutos > 59) {
+                return false;
+            }
+            // Validar días por mes
+            Calendar cal = Calendar.getInstance();
+            cal.setLenient(false);
+            cal.set(anio, mes - 1, dia, hora, minutos, 0);
+            cal.getTime(); // Esto lanzará una excepción si la fecha es inválida
+
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
             sdf.setLenient(false);
             Date fecha = sdf.parse(entradaTeclado);
-            Date ahora = new Date();
-            return !fecha.before(ahora);
+
+            // Comparar con la fecha actual
+            Calendar ahora = Calendar.getInstance();
+            ahora.setTime(new Date());
+            ahora.set(Calendar.SECOND, 0);
+            ahora.set(Calendar.MILLISECOND, 0);
+
+            return !fecha.before(ahora.getTime());
         } catch (Exception e) {
             return false;
         }

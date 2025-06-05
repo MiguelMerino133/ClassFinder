@@ -1,139 +1,90 @@
 package ec.edu.uce.classfinder.consola;
 
-import ec.edu.uce.classfinder.gui.*;
 import ec.edu.uce.classfinder.dominio.Reserva;
 import ec.edu.uce.classfinder.dominio.Universidad;
+import ec.edu.uce.classfinder.gui.GUIReserva;
 import ec.edu.uce.classfinder.util.Validadores;
-import java.text.ParseException;
+
 import java.util.Scanner;
 
 /**
- * Representa el submenú para gestionar reservas en el sistema ClassFinder.
- * Permite realizar operaciones CRUD sobre las reservas a través de {@link Universidad}.
+ * Submenú para gestionar reservas en el sistema ClassFinder.
  * @author Grupo 7: Merino Miguel, Quinatoa Mishell
  */
 public class SubMenuReservas {
+    private final Scanner entradaTeclado;
+    private final Universidad universidad;
+    private final GUIReserva guiReserva;
 
-    private Universidad universidad;
-
-    public SubMenuReservas(Universidad universidad) {
+    public SubMenuReservas(Scanner entradaTeclado, Universidad universidad) {
+        this.entradaTeclado = entradaTeclado;
         this.universidad = universidad;
+        this.guiReserva = new GUIReserva(universidad);
     }
 
-    public void mostrar() throws ParseException {
-        Scanner entradaTeclado = new Scanner(System.in);
+    public void mostrarMenuReservas() {
         int opcion;
-
         do {
-            System.out.println("=== GESTIÓN DE RESERVAS ===");
-            System.out.println("1. Registrar Reserva");
-            System.out.println("2. Consultar Reserva");
-            System.out.println("3. Editar Reserva");
-            System.out.println("4. Eliminar Reserva");
-            System.out.println("5. Aprobar/Rechazar Reserva");
-            System.out.println("6. Volver al Menú Principal");
+            System.out.println("\n=== MENÚ RESERVAS ===");
+            System.out.println("1. Registrar reserva");
+            System.out.println("2. Consultar reserva");
+            System.out.println("3. Editar reserva");
+            System.out.println("4. Eliminar reserva");
+            System.out.println("5. Aprobar/Rechazar reserva");
+            System.out.println("6. Regresar al menú principal");
             System.out.print("Seleccione una opción: ");
-            String entrada = entradaTeclado.nextLine();
-            if (Validadores.esNumeroValido(entrada)) {
-                opcion = Integer.parseInt(entrada);
-            } else {
-                System.out.println("Error: Debe ingresar un número válido. Intente de nuevo.");
+
+            String entrada = entradaTeclado.nextLine().trim();
+            if (!Validadores.esNumeroValido(entrada)) {
+                System.out.println("Error: Debe ingresar un número válido.");
                 opcion = 0;
                 continue;
             }
 
+            opcion = Integer.parseInt(entrada);
             switch (opcion) {
                 case 1:
-                    GUIRegistrarReserva guiRegistrar = new GUIRegistrarReserva();
-                    Reserva nuevaReserva = guiRegistrar.registrar();
-                    if (nuevaReserva != null && universidad.crearReserva(nuevaReserva)) {
-                        System.out.println("Reserva registrada: " + nuevaReserva.toString());
+                    Reserva nuevaReserva = guiReserva.registrar();
+                    if (nuevaReserva != null && universidad.validarDuplicado(nuevaReserva)) {
+                        if (universidad.crearReserva(nuevaReserva)) {
+                            System.out.println("Reserva registrada: " + nuevaReserva.getIdReserva());
+                        } else {
+                            System.out.println("Error al registrar reserva.");
+                        }
                     } else {
-                        System.out.println("Error al registrar reserva.");
+                        System.out.println("Error: ID de reserva ya registrado.");
                     }
                     break;
                 case 2:
-                    if (universidad.getNumReservas() == 0) {
-                        System.out.println("No hay reservas registradas.");
-                        continue;
-                    }
-                    GUIConsultarReserva guiConsultar = new GUIConsultarReserva(universidad);
-                    String idReserva = guiConsultar.consultar();
-                    guiConsultar.mostrarReserva(idReserva);
+                    guiReserva.consultar();
                     break;
                 case 3:
-                    if (universidad.getNumReservas() == 0) {
-                        System.out.println("No hay reservas registradas.");
-                        continue;
-                    }
-                    GUIEditarReserva guiEditar = new GUIEditarReserva();
-                    Reserva reservaEditada = guiEditar.editar(universidad);
+                    Reserva reservaEditada = guiReserva.editar();
                     if (reservaEditada != null) {
-                        int posEditar;
-                        do {
-                            System.out.print("Confirme la posición de la reserva a editar: ");
-                            entrada = entradaTeclado.nextLine();
-                            if (Validadores.esNumeroValido(entrada)) {
-                                posEditar = Integer.parseInt(entrada);
-                                if (posEditar >= 0 && posEditar < universidad.getNumReservas()) {
-                                    if (universidad.editarReserva(posEditar, reservaEditada)) {
-                                        System.out.println("Reserva editada: " + reservaEditada.toString());
-                                    } else {
-                                        System.out.println("Error al editar reserva.");
-                                    }
-                                    break;
-                                } else {
-                                    System.out.println("Error: Posición inválida.");
-                                }
-                            } else {
-                                System.out.println("Error: Debe ingresar un número válido.");
-                            }
-                        } while (true);
+                        System.out.println("Reserva actualizada: " + reservaEditada.getIdReserva());
+                    } else {
+                        System.out.println("Error al editar reserva.");
                     }
                     break;
                 case 4:
-                    if (universidad.getNumReservas() == 0) {
-                        System.out.println("No hay reservas registradas.");
-                        continue;
-                    }
-                    GUIEliminarReserva guiEliminar = new GUIEliminarReserva();
-                    Reserva resultado = guiEliminar.eliminar(universidad);
-                    if (resultado == null) {
-                        int posEliminar;
-                        do {
-                            System.out.print("Confirme la posición de la reserva a elminar: ");
-                            entrada = entradaTeclado.nextLine();
-                            if (Validadores.esNumeroValido(entrada)) {
-                                posEliminar = Integer.parseInt(entrada);
-                                if (posEliminar >= 0 && posEliminar < universidad.getNumReservas()) {
-                                    if (universidad.eliminarReserva(posEliminar)) {
-                                        System.out.println("Reserva cancelada en posición " + posEliminar);
-                                    } else {
-                                        System.out.println("Error al cancelar reserva.");
-                                    }
-                                    break;
-                                } else {
-                                    System.out.println("Error: Posición inválida.");
-                                }
-                            } else {
-                                System.out.println("Error: Debe ingresar un número válido.");
-                            }
-                        } while (true);
+                    if (guiReserva.eliminar()) {
+                        System.out.println("Reserva eliminada correctamente.");
+                    } else {
+                        System.out.println("Error al eliminar reserva.");
                     }
                     break;
                 case 5:
-                    if (universidad.getNumReservas() == 0) {
-                        System.out.println("No hay reservas registradas.");
-                        continue;
+                    if (guiReserva.aprobarRechazar()) {
+                        System.out.println("Estado de reserva actualizado correctamente.");
+                    } else {
+                        System.out.println("Error al actualizar estado de reserva.");
                     }
-                    GUIAprobarRechazarReserva guiAprobarRechazar = new GUIAprobarRechazarReserva(universidad);
-                    guiAprobarRechazar.aprobarRechazar();
                     break;
                 case 6:
                     System.out.println("Regresando al menú principal...");
                     break;
                 default:
-                    System.out.println("Opción inválida. Intente de nuevo.");
+                    System.out.println("Error: Opción inválida.");
             }
         } while (opcion != 6);
     }

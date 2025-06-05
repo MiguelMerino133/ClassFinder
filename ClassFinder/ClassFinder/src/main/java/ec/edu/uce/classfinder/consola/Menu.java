@@ -55,20 +55,20 @@ public class Menu {
                     subMenuIngresar.mostrar();
                     break;
                 case 2:
-                    SubMenuUsuarios subMenuUsuarios = new SubMenuUsuarios(universidad);
-                    subMenuUsuarios.mostrar();
+                    SubMenuUsuarios subMenuUsuarios = new SubMenuUsuarios(entradaTeclado, universidad);
+                    subMenuUsuarios.mostrarMenuUsuarios();
                     break;
                 case 3:
-                    SubMenuLugares subMenuLugares = new SubMenuLugares(universidad);
-                    subMenuLugares.mostrar();
+                    SubMenuLugares subMenuLugares = new SubMenuLugares(entradaTeclado, universidad);
+                    subMenuLugares.mostrarMenuLugares();
                     break;
                 case 4:
-                    SubMenuEspacios subMenuEspacios = new SubMenuEspacios(universidad);
-                    subMenuEspacios.mostrar();
+                    SubMenuEspacios subMenuEspacios = new SubMenuEspacios(entradaTeclado, universidad);
+                    subMenuEspacios.mostrarMenuEspacios();
                     break;
                 case 5:
-                    SubMenuReservas subMenuReservas = new SubMenuReservas(universidad);
-                    subMenuReservas.mostrar();
+                    SubMenuReservas subMenuReservas = new SubMenuReservas(entradaTeclado, universidad);
+                    subMenuReservas.mostrarMenuReservas();
                     break;
                 case 6:
                     System.out.println("Saliendo del sistema...");
